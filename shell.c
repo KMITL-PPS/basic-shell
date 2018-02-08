@@ -3,6 +3,9 @@
 #include <sys/types.h>
 #include <string.h>
 
+#define MAX_ARG 30
+#define MAX_CMD 10
+
 void run(char **);
 char** splitArg(char *);
 char** splitCmd(char *);
@@ -16,17 +19,17 @@ int main()
         scanf("%[^\n]", cmd);
         getchar();
 
+        // check if user type command 'quit'
+        if (!strcmp(cmd, "quit"))
+            return 0;
+
         // split multiple command
 
-        // split multiple arguments
+            // split multiple arguments
+            char** args = splitArg(cmd);
 
-        // test run command
-        // char **test = {"/bin/ls", 0};
-        char** test = (char **) malloc(3 * sizeof(char *));
-        test[0] = "/bin/ls";
-        test[1] = ".";
-        test[2] = NULL;
-        run(test);
+            // test run command
+            run(args);
     }
     return 0;
 }
@@ -37,7 +40,10 @@ void run(char** cmd)
     pid_t pid = fork();
     int status;
     if (pid == 0) {
-        execv(cmd[0], cmd);
+        if (execvp(cmd[0], cmd) < 0) {
+            printf("%s: command error!\n", cmd[0]);
+        }
+        // perror(cmd[0]);
     } else {
         wait(&status);
         // printf("\n");
@@ -46,7 +52,21 @@ void run(char** cmd)
 
 char** splitArg(char* cmd)
 {
+    int i;
+    char* token;
+    char** tokens = (char **) malloc(MAX_ARG * sizeof(char *));
+    for (i = 0; token = strsep(&cmd, " "); i++) {
+        // check if command contain more than one space or contain no character
+        if (token != NULL && token[0] != 0 && token[0] != ' ') {
+            tokens[i] = token;
+        } else {
+            i--;
+        }
+    }
+    tokens[i++] = NULL;
+    realloc(tokens, i);
 
+    return tokens;
 }
 
 char** splitCmd(char* cmd)
