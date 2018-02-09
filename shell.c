@@ -36,14 +36,23 @@ int main()
 
 void run(char** cmd)
 {
-    // test run command
+    // run command
     pid_t pid = fork();
     int status;
+
+    // debug
+    int j;
+    for (j = 0; j < 3; j++) {
+        printf("[%s]", cmd[j]);
+    }
+
     if (pid == 0) {
         if (execvp(cmd[0], cmd) < 0) {
             printf("%s: command error!\n", cmd[0]);
         }
+        // execvp(cmd[0], cmd);
         // perror(cmd[0]);
+        exit(0);
     } else {
         wait(&status);
         // printf("\n");
@@ -64,6 +73,7 @@ char** splitArg(char* cmd)
         }
     }
     tokens[i++] = NULL;
+
     realloc(tokens, i);
 
     return tokens;
