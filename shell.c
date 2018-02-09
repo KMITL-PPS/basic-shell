@@ -11,40 +11,54 @@ void run(char **);
 char** splitArg(char *);
 char** splitCmd(char *);
 
-int main()
+int main(int argc, char** argv)
 {
-    char* str;
-    while (1) {
-        str = (char *) malloc(MAX_STR * sizeof(char));
-        // memset(str, 0, MAX_STR);
+    // INTERACTIVE MODE
+    if (argc == 1)
+    {
+        char* str;
+        while (1) {
+            str = (char *) malloc(MAX_STR * sizeof(char));
+            // memset(str, 0, MAX_STR);
 
-        // receive command from stdin
-        printf("shell> ");
-        scanf("%[^\n]", str);
-        getchar();
-        // realloc(str, strlen(str));
+            // receive command from stdin
+            printf("shell> ");
+            scanf("%[^\n]", str);
+            getchar();
+            // realloc(str, strlen(str));
 
-        // check if user type command 'quit'
-        if (!strcmp(str, "quit"))
-            return 0;
+            // check if user type command 'quit'
+            if (!strcmp(str, "quit"))
+                return 0;
 
-        // split multiple command
-        char **cmds = splitCmd(str);
+            // split multiple command
+            char **cmds = splitCmd(str);
 
-        run(cmds);
+            // run(cmds);
 
-        // int i = 0;
-        // char* cmd;
-        // while (cmd = cmds[i++]) {
-        //     // printf("%s\n", cmd);
+            // int i = 0;
+            // char* cmd;
+            // while (cmd = cmds[i++]) {
+            //     // printf("%s\n", cmd);
 
-        //     // split multiple arguments
-        //     char** args = splitArg(cmd);
+            //     // split multiple arguments
+            //     char** args = splitArg(cmd);
 
-        //     // run command
-        //     run(args);
-        // }
-        // free(str);
+            //     // run command
+            //     run(args);
+            // }
+            // free(str);
+        }
+    }
+    // BATCH MODE
+    else if (argc == 2)
+    {
+        printf("%s", argv[1]);
+    }
+    // ERROR
+    else
+    {
+        printf("Usage: shell [batch_file]");
     }
     return 0;
 }
