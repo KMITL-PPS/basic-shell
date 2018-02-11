@@ -16,44 +16,34 @@ int main(int argc, char** argv)
     // INTERACTIVE MODE
     if (argc == 1)
     {
-        char* str;
+        char str[MAX_STR];
         while (1) {
-            str = (char *) malloc(MAX_STR * sizeof(char));
-            // memset(str, 0, MAX_STR);
+            // in case user did not type anything
+            str[0] = '\0';
 
             // receive command from stdin
             printf("shell> ");
             scanf("%[^\n]", str);
             getchar();
-            // realloc(str, strlen(str));
 
-            // check if user type command 'quit'
-            if (!strcmp(str, "quit"))
+            // check if user type command 'quit' or user did not type anything
+            if (!strcmp(str, "quit")) {
                 return 0;
+            } else if (strlen(str) == 0) {
+                continue;
+            }
 
             // split multiple command
             char **cmds = splitCmd(str);
 
-            // run(cmds);
-
-            // int i = 0;
-            // char* cmd;
-            // while (cmd = cmds[i++]) {
-            //     // printf("%s\n", cmd);
-
-            //     // split multiple arguments
-            //     char** args = splitArg(cmd);
-
-            //     // run command
-            //     run(args);
-            // }
-            // free(str);
+            // run commands
+            run(cmds);
         }
     }
     // BATCH MODE
     else if (argc == 2)
     {
-        printf("%s", argv[1]);
+        // TODO: read from file, run commands
     }
     // ERROR
     else
@@ -65,43 +55,31 @@ int main(int argc, char** argv)
 
 void run(char** cmds)
 {
-    int i = 0;
-    char* cmd;
-    int status;
-    while (cmd = cmds[i++]) {
-        pid_t pid = fork();
-
-        if (pid == 0) {     // child
+    int i = 0, j, status;
+    char** cmd;
+    while (cmd = splitArg(cmds[i++])) {
+        if (fork() == 0) {     // child
             if (execvp(cmd[0], cmd) < 0) {
-                printf("[%d]%s: command error!\n", pid, cmd[0]);
+                printf("%s: command error!\n", cmd[0]);
             }
             // execvp(cmd[0], cmd);
             // perror(cmd[0]);
             exit(0);
         }
     }
-    wait(&status);
+    // waitpid(-1);
+    for (j = 0; j < i; j++)
+        wait(&status);
+
     free(cmds);
-
-    // pid_t pid = fork();
-    // int status;
-
-    // if (pid == 0) {
-    //     if (execvp(cmd[0], cmd) < 0) {
-    //         printf("%s: command error!\n", cmd[0]);
-    //     }
-    //     // execvp(cmd[0], cmd);
-    //     // perror(cmd[0]);
-    //     exit(0);
-    // } else {
-    //     wait(&status);
-    //     free(cmd);
-    //     // printf("\n");
-    // }
 }
 
 char** splitArg(char* cmd)
 {
+    if (cmd == NULL) {
+        return NULL;
+    }
+
     int i;
     char* token;
     char** tokens = (char **) malloc(MAX_ARG * sizeof(char *));
@@ -114,7 +92,7 @@ char** splitArg(char* cmd)
         }
     }
     tokens[i++] = NULL;
-    realloc(tokens, i);
+    // realloc(tokens, i);
     free(cmd);
 
     return tokens;
@@ -122,19 +100,18 @@ char** splitArg(char* cmd)
 
 char** splitCmd(char* str)
 {
+    if (str == NULL) {
+        return NULL;
+    }
+    
     int i;
     char* cmd;
-    char** cmds = (char **) malloc(MAX_ARG * sizeof(char *));
+    char** cmds = (char **) malloc(MAX_CMD * sizeof(char *));
     for (i = 0; cmd = strsep(&str, ";"); i++) {
-        // check if command contain more than one space or contain no character
-        // if (cmd != NULL && cmd[0] != 0 && cmd[0] != ' ') {
-            cmds[i] = cmd;
-        // } else {
-        //     i--;
-        // }
+        cmds[i] = cmd;
     }
-    cmds[i++] = NULL;
-    realloc(cmds, i);
+    cmds[i++] = 0;
+    // realloc(cmds, i);
     free(str);
 
     return cmds;
