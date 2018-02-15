@@ -1,3 +1,5 @@
 
 .vscode/*
 shell
+.DS_Store
+a.out
