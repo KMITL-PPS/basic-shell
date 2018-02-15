@@ -60,7 +60,7 @@ void run(char** cmds)
     while (cmd = splitArg(cmds[i++])) {
         if (fork() == 0) {     // child
             if (execvp(cmd[0], cmd) < 0) {
-                printf("%s: command error!\n", cmd[0]);
+                fprintf(stderr, "%s: command error!\n", cmd[0]);
             }
             // execvp(cmd[0], cmd);
             // perror(cmd[0]);
