@@ -29,10 +29,8 @@ int main(int argc, char** argv)
             scanf("%[^\n]", str);
             getchar();
 
-            // check if user type command 'quit' or user did not type anything
-            if (!strcmp(str, "quit")) {
-                return 0;
-            } else if (strlen(str) == 0) {
+            // check if user did not type anything
+            if (strlen(str) == 0) {
                 continue;
             }
 
@@ -46,7 +44,7 @@ int main(int argc, char** argv)
     // BATCH MODE
     else if (argc == 2)
     {
-        // TODO: read from file, run commands
+        // TODO: read from file, run commands, quit
     }
     // WRONG USAGE
     else
@@ -140,6 +138,13 @@ char** splitCmd(char* str)
     char** cmds = (char **) malloc(MAX_CMD * sizeof(char *));
     // split string with semi-colon
     for (i = 0; cmd = strsep(&str, ";"); i++) {
+        // check if there is command 'quit' in array
+        if (strstr(cmd, "quit") != NULL) {
+            // free(str);
+            // free(cmds);
+            exit(0);
+        }
+
         cmds[i] = cmd;
     }
     // add null character to show end of array
