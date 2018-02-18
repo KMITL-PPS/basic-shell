@@ -1,0 +1,2 @@
+ls; date; ls -al; grep main shell.c
+quit

@@ -1,5 +1,0 @@
-ls
-grep main shell.c
-ls -al
-date
-quit
