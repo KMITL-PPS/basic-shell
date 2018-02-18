@@ -44,7 +44,31 @@ int main(int argc, char** argv)
     // BATCH MODE
     else if (argc == 2)
     {
-        // TODO: read from file, run commands, quit
+        char buff[MAX_STR];	
+        FILE* fp;
+        fp = fopen(argv[1], "r");
+
+        //make sure file isn't NULL
+        if (fp == NULL)
+            printf("error");
+        
+        //read a line of command in batch file
+        while (fgets(buff, MAX_STR, fp))
+        {
+            char str[MAX_STR];
+            memcpy(str, &buff[0], strlen(buff) - 1);
+            str[strlen(buff) - 1] = '\0';
+
+            // split multiple command
+            char** cmds = splitCmd(str);
+            
+            // execute multiple commands with concurrent
+            run(cmds);
+        }
+        fclose(fp);
+
+        // make sure program will exit after execute
+        exit(0);
     }
     // WRONG USAGE
     else
