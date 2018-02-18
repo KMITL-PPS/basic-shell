@@ -1,0 +1,5 @@
+ls
+ls -al
+date
+grep main shell.c
+quit
